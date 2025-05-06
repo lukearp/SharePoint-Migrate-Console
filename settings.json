@@ -1,0 +1,20 @@
+{
+   "entra": {
+      "client_id": "",
+      "client_secret": "",
+      "tenantId": "",
+      "tokenBaseAddress": "https://login.microsoftonline.com/"
+   },
+   "logFileName": "Files.txt",
+   "siteId": "",
+   "driveId": "",
+   "sharePointBaseFolder": "",
+   "targetType": "FileSystem",
+   "targetBase": "",
+   "blobEndpointUrl": "",
+   "blobContainer": "",
+   "blobBaseAddress": "https://storage.azure.com/",
+   "downloadFiles": true,
+   "recursive": true,
+   "foldersOnly": false
+}
