@@ -38,6 +38,8 @@ You can also override the settings.json behavior using console commands
 .\Sharepoint-Migrate-Console.exe --downloadFiles true --recursive false --foldersOnly false
 ```
 
+If you choose targetType as FileSystem, you will not need to give a value to blobEndpointUrl, blobContainer, or blobBaseAddress
+
 # Known Issues and Future Features
 
 Observed when running against Sharepoint environments that have a lot of files, threads seem to die without downloading the files.  I am working to understand what is causing this, but I do check to see if the file already exists before downloading.  I also check to see if the sharepoint has been updated since the last run, so you should be safe to continue running overagain and it will start downloading where it left off.  
