@@ -40,6 +40,14 @@ You can also override the settings.json behavior using console commands
 
 If you choose targetType as FileSystem, you will not need to give a value to blobEndpointUrl, blobContainer, or blobBaseAddress
 
+If you want to find all the Drive Ids in your SharePoint environment outputed to terminal you can do the following:
+
+```cmd
+.\Sharepoint-Migrate-Console.exe --findDriveId
+```
+
+--findDriveId only requires the entra portion of the settings.json filled out.
+
 # Known Issues and Future Features
 
 Observed when running against Sharepoint environments that have a lot of files, threads seem to die without downloading the files.  I am working to understand what is causing this, but I do check to see if the file already exists before downloading.  I also check to see if the sharepoint has been updated since the last run, so you should be safe to continue running overagain and it will start downloading where it left off.  

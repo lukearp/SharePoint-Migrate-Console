@@ -332,7 +332,7 @@ public class SharePoint
         TokenResponse token;
         try
         {
-            if(sharePointConfig.targetType == "FileSystem")
+            if (sharePointConfig.targetType == "FileSystem")
             {
                 token = new TokenResponse();
             }
@@ -406,22 +406,58 @@ public class SharePoint
         }
     }
 
-    public static SharePointSiteResponse GetSharePointSites()
+    public static List<SharePointSite> GetSharePointSites()
     {
         TokenResponse token = GetToken();
         HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, "/v1.0/sites");
         message.Headers.Add("Authorization", "Bearer " + token.access_token);
         message.Headers.Add("ContentType", "application/json");
-        return JsonSerializer.Deserialize<SharePointSiteResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+        List<SharePointSite> sites = new List<SharePointSite>();
+        try
+        {
+            SharePointSiteResponse response = JsonSerializer.Deserialize<SharePointSiteResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+            sites.AddRange(response.value);
+            while (response.nextLink != null)
+            {
+                message = new HttpRequestMessage(HttpMethod.Get, response.nextLink);
+                message.Headers.Add("Authorization", "Bearer " + token.access_token);
+                message.Headers.Add("ContentType", "application/json");
+                response = JsonSerializer.Deserialize<SharePointSiteResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+                sites.AddRange(response.value);
+            }
+        }
+        catch
+        {
+
+        }
+        return sites;
     }
 
-    public static SharePointSiteResponse GetSharePointDrives()
+    public static List<SharePointDrive> GetSharePointDrives(string sharpointId)
     {
         TokenResponse token = GetToken();
-        HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, $"/v1.0/sites/{sharePointConfig.siteId}/drives");
+        HttpRequestMessage message = new HttpRequestMessage(HttpMethod.Get, $"/v1.0/sites/{sharpointId}/drives");
         message.Headers.Add("Authorization", "Bearer " + token.access_token);
         message.Headers.Add("ContentType", "application/json");
-        return JsonSerializer.Deserialize<SharePointSiteResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+        List<SharePointDrive> drives = new List<SharePointDrive>();
+        try
+        {
+            SharePointDriveResponse response = JsonSerializer.Deserialize<SharePointDriveResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+            drives.AddRange(response.value);
+            while (response.nextLink != null)
+            {
+                message = new HttpRequestMessage(HttpMethod.Get, response.nextLink);
+                message.Headers.Add("Authorization", "Bearer " + token.access_token);
+                message.Headers.Add("ContentType", "application/json");
+                response = JsonSerializer.Deserialize<SharePointDriveResponse>(sharePointClient.SendAsync(message).Result.Content.ReadAsStringAsync().Result);
+                drives.AddRange(response.value);
+            }
+        }
+        catch
+        {
+
+        }
+        return drives;
     }
 }
 
@@ -430,6 +466,22 @@ public class SharePointSiteResponse
     [JsonPropertyName("@odata.nextLink")]
     public string nextLink { get; set; }
     public List<SharePointSite> value { get; set; }
+}
+
+public class SharePointDriveResponse
+{
+    [JsonPropertyName("@odata.nextLink")]
+    public string nextLink { get; set; }
+    public List<SharePointDrive> value { get; set; }
+}
+
+public class SharePointDrive
+{
+    public string id { get; set; }
+    public string name { get; set; }
+    public string webUrl { get; set; }
+    public string driveType { get; set; }
+    public SharePointCreatedBy createdBy { get; set; }
 }
 
 public class SharePointSite
